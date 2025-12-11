@@ -59,6 +59,10 @@
       color: white;
     }
 
+    .btn-container {
+      margin-top: 15px; /* Tambahkan sedikit ruang */
+    }
+
     button {
       width: 100%;
       padding: 12px;
@@ -74,6 +78,19 @@
 
     button:hover {
       background: #0097a7;
+    }
+    
+    /* Gaya untuk tombol Guest Login */
+    #guest-login {
+      background: #333; /* Warna yang lebih netral atau kontras */
+      color: #00bcd4; /* Warna teks sesuai tema */
+      font-weight: normal;
+      border: 1px solid #00bcd4;
+    }
+
+    #guest-login:hover {
+      background: #444;
+      color: white;
     }
 
     #msg {
@@ -100,8 +117,7 @@
 </head>
 <body>
 
-  <!-- panel transisi -->
-  <div id="transition"></div>
+    <div id="transition"></div>
 
   <div class="login-box">
     <h2>Login</h2>
@@ -109,7 +125,10 @@
     <input id="username" placeholder="Username">
     <input id="password" type="password" placeholder="Password">
 
-    <button onclick="login()">Login</button>
+    <div class="btn-container">
+      <button onclick="login()">Login</button>
+            <button id="guest-login" onclick="guestLogin()">Login tanpa Akun</button>
+    </div>
 
     <div id="msg"></div>
   </div>
@@ -122,13 +141,23 @@
       { username: "user3", password: "user3" }
     ];
 
-    // animasi masuk halaman → panel turun
-    window.addEventListener("load", () => {
-      document.body.classList.add("loaded");
+    function startTransitionAndRedirect(isLoggedIn, username = null) {
+      if (isLoggedIn) {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("username", username);
+      } else {
+        localStorage.setItem("loggedIn", "guest");
+        localStorage.removeItem("username");
+      }
+
+      const panel = document.getElementById("transition");
+      panel.style.transform = "translateY(100%)";
+      panel.classList.add("active");
+
       setTimeout(() => {
-        document.getElementById("transition").style.transform = "translateY(-100%)";
-      }, 50);
-    });
+        window.location.href = "index.html";
+      }, 700);
+    }
 
     function login() {
       const u = document.getElementById("username").value;
@@ -137,19 +166,22 @@
       const ok = users.find(x => x.username === u && x.password === p);
 
       if (ok) {
-        localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("username", ok.username);
-      
-        const panel = document.getElementById("transition");
-        panel.classList.add("active"); // panel naik → tutup layar
-
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 700);
+        startTransitionAndRedirect(true, ok.username);
       } else {
         document.getElementById("msg").textContent = "Invalid username or password";
       }
     }
+
+    function guestLogin() {
+      startTransitionAndRedirect(false);
+    }
+
+    window.addEventListener("load", () => {
+      document.body.classList.add("loaded");
+      setTimeout(() => {
+        document.getElementById("transition").style.transform = "translateY(-100%)";
+      }, 50);
+    });
   </script>
 
 </body>
