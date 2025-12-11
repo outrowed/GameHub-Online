@@ -622,12 +622,12 @@
   //}
 
   if (!["true", "guest"].includes(localStorage.getItem("loggedIn"))) {
-    window.location.href = "login.html";
+    window.location.href = "./login.html";
   }
 
   function logoutUser() {
     localStorage.removeItem("loggedIn");
-    window.location.href = "login.html";
+    window.location.href = "./login.html";
   }
 
   // Efek masuk
@@ -817,3 +817,4 @@ function showPreview() {
 
 </body>
 </html>
+
